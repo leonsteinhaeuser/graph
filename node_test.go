@@ -136,7 +136,7 @@ func TestNode_WalkDFS(t *testing.T) {
 	type test struct {
 		name   string
 		fields fields
-		want   []*Node[string, Data]
+		want   []string
 	}
 	tests := []test{
 		func() test {
@@ -149,27 +149,44 @@ func TestNode_WalkDFS(t *testing.T) {
 			chld2.AddChild(chld3)
 			chld2.AddChild(chld4)
 
-			wantNodeList := []*Node[string, Data]{
-				rootNode,
-				chld2,
-				chld3,
-				chld4,
+			return test{
+				name: "add child node",
+				fields: fields{
+					rootNode: rootNode,
+				},
+				want: []string{"A", "B", "C", "D"},
 			}
+		}(),
+		func() test {
+			rootNode := NewNode("A", Data{1, false})
+			chld2 := NewNode("B", Data{2, false})
+			chld3 := NewNode("C", Data{3, false})
+			chld4 := NewNode("D", Data{4, false})
+			chld5 := NewNode("E", Data{5, false})
+			chld6 := NewNode("F", Data{6, false})
+			chld7 := NewNode("G", Data{7, false})
+
+			rootNode.AddChild(chld2)
+			rootNode.AddChild(chld3)
+			chld2.AddChild(chld4)
+			chld2.AddChild(chld5)
+			chld3.AddChild(chld6)
+			chld6.AddChild(chld7)
 
 			return test{
 				name: "add child node",
 				fields: fields{
 					rootNode: rootNode,
 				},
-				want: wantNodeList,
+				want: []string{"A", "B", "D", "E", "C", "F", "G"},
 			}
 		}(),
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotNodeList := []*Node[string, Data]{}
+			gotNodeList := []string{}
 			tt.fields.rootNode.WalkDFS(func(n *Node[string, Data]) {
-				gotNodeList = append(gotNodeList, n)
+				gotNodeList = append(gotNodeList, n.ID())
 			})
 			if !reflect.DeepEqual(gotNodeList, tt.want) {
 				t.Errorf("Node.WalkDFS() got \n%+#v\n, want \n%+#v", gotNodeList, tt.want)
@@ -185,7 +202,7 @@ func TestNode_WalkBFS(t *testing.T) {
 	type test struct {
 		name   string
 		fields fields
-		want   []*Node[string, Data]
+		want   []string
 	}
 	tests := []test{
 		func() test {
@@ -198,27 +215,44 @@ func TestNode_WalkBFS(t *testing.T) {
 			chld2.AddChild(chld3)
 			chld2.AddChild(chld4)
 
-			wantNodeList := []*Node[string, Data]{
-				rootNode,
-				chld2,
-				chld3,
-				chld4,
+			return test{
+				name: "add child node",
+				fields: fields{
+					rootNode: rootNode,
+				},
+				want: []string{"A", "B", "C", "D"},
 			}
+		}(),
+		func() test {
+			rootNode := NewNode("A", Data{1, false})
+			chld2 := NewNode("B", Data{2, false})
+			chld3 := NewNode("C", Data{3, false})
+			chld4 := NewNode("D", Data{4, false})
+			chld5 := NewNode("E", Data{5, false})
+			chld6 := NewNode("F", Data{6, false})
+			chld7 := NewNode("G", Data{7, false})
+
+			rootNode.AddChild(chld2)
+			rootNode.AddChild(chld3)
+			rootNode.AddChild(chld7)
+			chld2.AddChild(chld4)
+			chld2.AddChild(chld5)
+			chld3.AddChild(chld6)
 
 			return test{
 				name: "add child node",
 				fields: fields{
 					rootNode: rootNode,
 				},
-				want: wantNodeList,
+				want: []string{"A", "B", "C", "G", "D", "E", "F"},
 			}
 		}(),
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotNodeList := []*Node[string, Data]{}
+			gotNodeList := []string{}
 			tt.fields.rootNode.WalkBFS(func(n *Node[string, Data]) {
-				gotNodeList = append(gotNodeList, n)
+				gotNodeList = append(gotNodeList, n.ID())
 			})
 			if !reflect.DeepEqual(gotNodeList, tt.want) {
 				t.Errorf("Node.WalkBFS() got \n%+#v\n, want \n%+#v", gotNodeList, tt.want)
