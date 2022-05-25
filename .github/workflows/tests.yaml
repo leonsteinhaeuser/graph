@@ -3,7 +3,7 @@ name: "Tests"
 on:
   push:
     branches:
-      - **
+      - "**"
 
 env:
   go_version: "1.18"
