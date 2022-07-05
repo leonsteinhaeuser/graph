@@ -380,3 +380,145 @@ func TestNode_Weight(t *testing.T) {
 		})
 	}
 }
+
+func TestNode_Parents(t *testing.T) {
+	parentNodeA := NewNode("A", Data{1, false})
+	parentNodeB := NewNode("B", Data{2, false})
+	parentNodeC := NewNode("C", Data{3, false})
+
+	type args struct {
+		rootNode *Node[string, Data]
+	}
+	type test struct {
+		name string
+		args args
+		want []*Node[string, Data]
+	}
+	tests := []test{
+		{
+			name: "one parent",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					parentNodeA.AddChild(childA)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+			},
+		},
+		{
+			name: "two parents",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					parentNodeA.AddChild(childA)
+					parentNodeB.AddChild(childA)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+				parentNodeB,
+			},
+		},
+		{
+			name: "three parents",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					parentNodeA.AddChild(childA)
+					parentNodeB.AddChild(childA)
+					parentNodeC.AddChild(childA)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+				parentNodeB,
+				parentNodeC,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.args.rootNode.Parents()
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Node.Parents() got \n%+#v\n, want \n%+#v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNode_Children(t *testing.T) {
+	parentNodeA := NewNode("A", Data{1, false})
+	parentNodeB := NewNode("B", Data{2, false})
+	parentNodeC := NewNode("C", Data{3, false})
+
+	type args struct {
+		rootNode *Node[string, Data]
+	}
+	type test struct {
+		name string
+		args args
+		want []*Node[string, Data]
+	}
+	tests := []test{
+		{
+			name: "one children",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					childA.AddChild(parentNodeA)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+			},
+		},
+		{
+			name: "two children",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					childA.AddChild(parentNodeA)
+					childA.AddChild(parentNodeB)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+				parentNodeB,
+			},
+		},
+		{
+			name: "three children",
+			args: args{
+				rootNode: func() *Node[string, Data] {
+					childA := NewNode("B", Data{2, false})
+					childA.AddChild(parentNodeA)
+					childA.AddChild(parentNodeB)
+					childA.AddChild(parentNodeC)
+					return childA
+				}(),
+			},
+			want: []*Node[string, Data]{
+				parentNodeA,
+				parentNodeB,
+				parentNodeC,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.args.rootNode.Children()
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Node.Children() got \n%+#v\n, want \n%+#v", got, tt.want)
+			}
+		})
+	}
+}

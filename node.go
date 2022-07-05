@@ -78,3 +78,13 @@ func (n *Node[id, v]) Value() v {
 func (n *Node[id, v]) Weight() int {
 	return n.weight
 }
+
+// Parents returns the parents of the node.
+func (n *Node[id, v]) Parents() []*Node[id, v] {
+	return n.parents
+}
+
+// Children returns the children of the node.
+func (n *Node[id, v]) Children() []*Node[id, v] {
+	return n.children
+}
